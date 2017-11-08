@@ -1,5 +1,6 @@
 package com.crypt;
 
 interface IObserver {
-    void update(IObservable o, Object arg);
+    void sendToWorkers(String message);
+    void addWorker(IObservable iobs);
 }
