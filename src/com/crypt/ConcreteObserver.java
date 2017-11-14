@@ -8,18 +8,12 @@ import java.util.*;
 
 public class ConcreteObserver implements IObserver {
     private List<Worker> workerList =  new ArrayList<>();
-    private volatile boolean notified = false;
     private CircularFifoQueue<HashMap<String, String>> history = new CircularFifoQueue<>(10);
-
-    public synchronized void setNotified(boolean b) {
-        this.notified = b;
-    }
 
     public synchronized void sendToWorkers(String msg) {
         store(msg);
         for (Worker worker : workerList) {
             worker.messQueueOut.add(msg);
-            setNotified(false);
         }
     }
 
