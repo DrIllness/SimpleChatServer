@@ -1,26 +1,21 @@
 package com.crypt;
 
-import sun.util.calendar.BaseCalendar;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Date;
-import java.util.Formatter;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 
 public class Worker implements IObservable, Runnable {
     public ConcurrentLinkedQueue<String> messQueueOut = new ConcurrentLinkedQueue<>();
-    private static int wCounter = 0;
     private Socket clientSocket = null;
     private ConcreteObserver observer = null;
     private Worker worker = null;
-    static Date date = new Date();
 
     Worker(Socket clientSocket, ConcreteObserver observer) {
         this.clientSocket = clientSocket;
         this.observer = observer;
-        this.wCounter++;
     }
 
     @Override
@@ -32,16 +27,20 @@ public class Worker implements IObservable, Runnable {
             DataInputStream in = new DataInputStream(sin);
             DataOutputStream out = new DataOutputStream(sout);
 
+            CircularFifoQueue<HashMap<String, String>> history = Server.observer.getHistory();
+            while (!history.isEmpty()) {
+                out.writeUTF(history.poll().toString());
+                out.flush();
+            }
+
             Thread listen = new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     while (true) {
                         try {
-                            String line = null;
-                            line = "[" + date + "]" + in.readUTF();
-
-                            notifyObserver(observer, line);
+                            String message;
+                            message = in.readUTF();
+                            notifyObserver(Server.observer, message);
                         } catch (IOException ex) {
                         }
                     }
@@ -61,19 +60,12 @@ public class Worker implements IObservable, Runnable {
             }
           } catch(Exception x) { x.printStackTrace(); }
 }
-
-    public void sendToClient() {
-        String message = messQueueOut.poll();
-    }
-
-    @Override
-    public void addObserver(IObserver obs) {
-    }
-
+   @Override
+    public void addObserver(IObserver obs) {}
     @Override
     public void removeObserver(IObserver obs) {}
 
     public void notifyObserver(IObserver obs, String msg) {
-        observer.sendToWorkers(msg);
+        obs.sendToWorkers(msg);
     }
 }

@@ -12,10 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
+    static ConcreteObserver observer = new ConcreteObserver();
     private static final Server SERVER = new Server();
     private int serverPort = 8080;
     private boolean isStopped = false;
-    ConcreteObserver observer = new ConcreteObserver();
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ServerSocket serverSocket = null;
 
@@ -26,14 +26,14 @@ public class Server {
     }
 
     private void start() {
-        while (!isStopped){
+        while (!isStopped) {
             Socket clientSocket = null;
             try {
                 clientSocket = this.serverSocket.accept();
             } catch (IOException ex) {
                 System.out.println("Failed to accept client connection");
             }
-            makeNewWorker(clientSocket, this.observer);
+            makeNewWorker(clientSocket, observer);
         }
     }
 
