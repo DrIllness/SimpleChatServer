@@ -34,6 +34,7 @@ public class Server {
                 System.out.println("Failed to accept client connection");
             }
             makeNewWorker(clientSocket, observer);
+            System.out.println();
         }
     }
 
