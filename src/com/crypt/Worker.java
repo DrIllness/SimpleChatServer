@@ -4,6 +4,7 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -11,7 +12,6 @@ public class Worker implements IObservable, Runnable {
     public ConcurrentLinkedQueue<String> messQueueOut = new ConcurrentLinkedQueue<>();
     private Socket clientSocket = null;
     private ConcreteObserver observer = null;
-    private Worker worker = null;
 
     Worker(Socket clientSocket, ConcreteObserver observer) {
         this.clientSocket = clientSocket;
@@ -27,9 +27,9 @@ public class Worker implements IObservable, Runnable {
             DataInputStream in = new DataInputStream(sin);
             DataOutputStream out = new DataOutputStream(sout);
 
-            CircularFifoQueue<HashMap<String, String>> history = Server.observer.getHistory();
+            CircularFifoQueue<HashMap<Date, String>> history = Server.observer.getHistory();
             while (!history.isEmpty()) {
-                out.writeUTF(history.poll().toString());
+                out.writeUTF(history.poll().values().toString());
                 out.flush();
             }
 
@@ -51,16 +51,14 @@ public class Worker implements IObservable, Runnable {
 
             while (true) {
                 while (!this.messQueueOut.isEmpty()) {
-                    System.out.println("Have message to send:");
                     out.writeUTF(messQueueOut.poll());
                     out.flush();
-                    System.out.println("Waiting for the next line...");
                     System.out.println();
                 }
             }
           } catch(Exception x) { x.printStackTrace(); }
 }
-   @Override
+    @Override
     public void addObserver(IObserver obs) {}
     @Override
     public void removeObserver(IObserver obs) {}

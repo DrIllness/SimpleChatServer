@@ -8,7 +8,7 @@ import java.util.*;
 
 public class ConcreteObserver implements IObserver {
     private List<Worker> workerList =  new ArrayList<>();
-    private CircularFifoQueue<HashMap<String, String>> history = new CircularFifoQueue<>(10);
+    private CircularFifoQueue<HashMap<Date, String>> history = new CircularFifoQueue<>(10);
 
     public synchronized void sendToWorkers(String msg) {
         store(msg);
@@ -16,7 +16,7 @@ public class ConcreteObserver implements IObserver {
             worker.messQueueOut.add(msg);
         }
     }
-
+    @Override
     public void addWorker(IObservable iobs) {
         if (iobs == null)
             throw new NullPointerException();
@@ -25,7 +25,7 @@ public class ConcreteObserver implements IObserver {
         }
     }
 
-    public CircularFifoQueue<HashMap<String, String>> getHistory() {
+    public CircularFifoQueue<HashMap<Date, String>> getHistory() {
         if (!history.isEmpty())
             return new CircularFifoQueue<>(this.history);
         else
@@ -33,8 +33,8 @@ public class ConcreteObserver implements IObserver {
     }
 
     private void store(String mes) {
-        HashMap<String, String> pair = new HashMap<>();
-        pair.put("Test", mes);
+        HashMap<Date, String> pair = new HashMap<>();
+        pair.put(new Date(), mes);
         history.add(pair);
     }
 }

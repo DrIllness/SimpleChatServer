@@ -49,7 +49,7 @@ public class Server {
     private void makeNewWorker(Socket socket, ConcreteObserver obs) {
         Worker worker = new Worker(socket, obs);
         this.threadPool.execute(worker);
-        this.observer.addWorker(worker);
+        observer.addWorker(worker);
     }
 
     private boolean isStopped() {
