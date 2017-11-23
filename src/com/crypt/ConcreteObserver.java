@@ -4,7 +4,6 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 import java.util.ArrayList;
 import java.util.*;
 
-
 public class ConcreteObserver implements IObserver {
     private List<Worker> workerList =  new ArrayList<>();
     private CircularFifoQueue<HashMap<Date, String>> history = new CircularFifoQueue<>(10);

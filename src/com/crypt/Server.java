@@ -1,28 +1,21 @@
 package com.crypt;
-import com.sun.javafx.property.adapter.PropertyDescriptor;
-import javafx.beans.Observable;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
-import java.util.List;
-import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
     static ConcreteObserver observer = new ConcreteObserver();
-    private static final Server SERVER = new Server();
     private int serverPort = 8080;
     private boolean isStopped = false;
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ServerSocket serverSocket = null;
 
-
-    public static void main(String[] args) {
-        SERVER.openServerSocket();
-        SERVER.start();
+    public void startServer() {
+        openServerSocket();
+        start();
     }
 
     private void start() {
